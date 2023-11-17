@@ -1,0 +1,25 @@
+{
+  "name": "three3ngine",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "camera-controls": "2.7.3",
+    "react": "18.2.0",
+    "three": "0.158.0",
+    "three-orbitcontrols-ts": "0.1.2",
+    "vanjs-core": "1.2.6"
+  },
+  "devDependencies": {
+    "@types/node": "^20.9.0",
+    "@types/react": ">=16.8",
+    "@types/three": "0.158.2",
+    "typescript": "5.2.2",
+    "vite": "5.0.0"
+  }
+}
