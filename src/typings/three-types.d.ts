@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import * as THREE from "three";
 //import { AttachType } from './core/renderer';
 
 export interface Intersection extends THREE.Intersection {
@@ -64,19 +64,19 @@ export declare type Overwrite<T, O> = Omit<T, NonFunctionKeys<O>> & O;
 declare type Args<T> = T extends new (...args: any) => any
   ? ConstructorParameters<T>
   : T;
-export declare type Euler = THREE.Euler | Parameters<THREE.Euler['set']>;
+export declare type Euler = THREE.Euler | Parameters<THREE.Euler["set"]>;
 export declare type Matrix4 =
   | THREE.Matrix4
-  | Parameters<THREE.Matrix4['set']>
-  | Readonly<THREE.Matrix4['set']>;
+  | Parameters<THREE.Matrix4["set"]>
+  | Readonly<THREE.Matrix4["set"]>;
 /**
  * Turn an implementation of THREE.Vector in to the type that an r3f component would accept as a prop.
  */
 declare type VectorLike<VectorClass extends THREE.Vector> =
   | VectorClass
-  | Parameters<VectorClass['set']>
-  | Readonly<Parameters<VectorClass['set']>>
-  | Parameters<VectorClass['setScalar']>[0];
+  | Parameters<VectorClass["set"]>
+  | Readonly<Parameters<VectorClass["set"]>>
+  | Parameters<VectorClass["setScalar"]>[0];
 export declare type Vector2 = VectorLike<THREE.Vector2>;
 export declare type Vector3 = VectorLike<THREE.Vector3>;
 export declare type Vector4 = VectorLike<THREE.Vector4>;
@@ -88,24 +88,19 @@ export declare type Color =
 export declare type ColorArray =
   | typeof THREE.Color
   | [color: THREE.ColorRepresentation];
-export declare type Layers = THREE.Layers | Parameters<THREE.Layers['set']>[0];
+export declare type Layers = THREE.Layers | Parameters<THREE.Layers["set"]>[0];
 export declare type Quaternion =
   | THREE.Quaternion
-  | Parameters<THREE.Quaternion['set']>;
+  | Parameters<THREE.Quaternion["set"]>;
 export declare type AttachCallback =
   | string
   | ((child: any, parentInstance: any) => void);
 export interface NodeProps<T, P> {
   attach?: AttachType;
-  /** Constructor arguments */
-  // args?: Args<P>;
-  // children?: React.ReactNode;
-  // ref?: React.Ref<T>;
-  // key?: React.Key;
-
   args?: Args<P>;
   children?: Meshp | Meshp[];
   onUpdate?: (self: T) => void;
+  render?: (delta: number) => void;
 }
 export declare type ExtendedColors<T> = {
   [K in keyof T]: T[K] extends THREE.Color | undefined ? Color : T[K];
@@ -803,12 +798,27 @@ export interface ThreeElements {
   shape: ShapeProps;
 }
 
-type Meshp = THREE.Mesh<
-  THREE.BufferGeometry,
-  THREE.MeshBasicMaterial,
-  THREE.Object3DEventMap
-> &
-  EventHandlers & { render?: (delta: number) => void };
+// type Meshp = THREE.Mesh<
+//   THREE.BufferGeometry,
+//   THREE.MeshBasicMaterial,
+//   THREE.Object3DEventMap
+// > &
+//   EventHandlers & { render?: (delta: number) => void };
+
+declare module "three" {
+  // interface Mesh extends EventHandlers {
+  //   render: (delta: number) => void;
+  // }
+
+  interface Object3D {
+    render?: (delta: number) => void;
+    onResize?: (
+      viewportWidth: number,
+      viewportHeight: number,
+      cameraAspect: number
+    ) => void;
+  }
+}
 
 declare global {
   namespace JSX {
