@@ -798,6 +798,8 @@ export interface ThreeElements {
   shape: ShapeProps;
 }
 
+export type ThreeElementsProps = ThreeElements[keyof ThreeElements];
+
 // type Meshp = THREE.Mesh<
 //   THREE.BufferGeometry,
 //   THREE.MeshBasicMaterial,
