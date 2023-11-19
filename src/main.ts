@@ -52,7 +52,11 @@ van.add(
   document.getElementById("app")!,
   Canvas(
     //Cube({ position: [0, 1, 0] }),
-    Cube2({ position: [0, 2, 0] }, Cube({ position: [0, 1, 0], color: "blue" }))
+    Cube2(
+      { position: [0, 2, 0] },
+      axesHelper({ args: [5] }),
+      Cube({ position: [0, 1, 0], color: "blue" })
+    )
     // group(
     //   { position: [2, 2, 0] },
     //   Cube({ position: [-1, 1, 0] }),

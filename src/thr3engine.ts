@@ -234,7 +234,7 @@ export const three3gine: Three3gine = {
     return material;
   },
   mesh: (...args) => {
-    let props: MeshProps = {};
+    let props: MeshProps & { children?: any[] } = {};
     let geometry = new THREE.BufferGeometry();
     let materials: THREE.Material[] = [];
 
@@ -254,12 +254,17 @@ export const three3gine: Three3gine = {
         props = item;
         return;
       }
-      props.children = item;
+
+      if (!props.children) {
+        props.children = [];
+      }
+
+      props.children.push(item);
     });
 
     const mesh = new THREE.Mesh(geometry, ...materials);
 
-    if (props.children) {
+    if (props?.children?.length) {
       const group = three3gine.group(props, mesh, props.children);
       return group;
     }
