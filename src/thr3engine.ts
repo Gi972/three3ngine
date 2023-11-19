@@ -3,6 +3,7 @@ import * as THREE from "three";
 import {
   AxesHelperProps,
   BoxGeometryProps,
+  GridHelperProps,
   GroupProps,
   MeshBasicMaterialProps,
   MeshProps,
@@ -202,6 +203,7 @@ type Three3gine = {
   ) => THREE.Mesh | THREE.Group;
   Camera: THREE.Camera;
   axesHelper: (props?: AxesHelperProps) => THREE.AxesHelper;
+  gridHelper: (props?: GridHelperProps) => THREE.GridHelper;
   group: (
     ...args: (GroupProps | THREE.Object3D | MeshProps)[]
   ) => THREE.Group | THREE.Group<THREE.Object3DEventMap>;
@@ -292,6 +294,14 @@ export const three3gine: Three3gine = {
     return props?.args
       ? new THREE.AxesHelper(...props.args)
       : new THREE.AxesHelper();
+  },
+  gridHelper: (props?: GridHelperProps) => {
+    const grid = props?.args
+      ? new THREE.GridHelper(...props.args)
+      : new THREE.GridHelper();
+
+    attachProps(grid, props);
+    return grid;
   },
   perspectiveCamera: () => {
     const camera = new THREE.PerspectiveCamera(
