@@ -11,13 +11,7 @@ import {
   ThreeElementsProps,
 } from "./typings/three-types";
 import { Renderer } from "three";
-// import {
-//   BoxGeometryProps,
-//   Camera,
-//   MeshBasicMaterialProps,
-//   MeshProps,
-//   Object3DProps,
-// } from "./typings/three-types";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 const { div } = van.tags;
 
@@ -26,8 +20,6 @@ export const DEFAULTS = new Map();
 
 export type AttachFnType = (parent: Instance, self: Instance) => () => void;
 export type AttachType = string | AttachFnType;
-
-type ClassConstructor = { new (): void };
 
 export type ColorManagementRepresentation =
   | { enabled: boolean | never }
@@ -207,6 +199,7 @@ type Three3gine = {
   group: (
     ...args: (GroupProps | THREE.Object3D | MeshProps)[]
   ) => THREE.Group | THREE.Group<THREE.Object3DEventMap>;
+  Controls: (object: THREE.Camera, domElement: HTMLElement) => OrbitControls;
   Scene: (objs: THREE.Object3D[]) => THREE.Scene;
   Canvas: (...props: THREE.Object3D[]) => HTMLDivElement;
   Renderer: (scene: THREE.Scene, camera: THREE.Camera) => THREE.WebGLRenderer;
@@ -313,6 +306,7 @@ export const three3gine: Three3gine = {
     camera.position.z = 5;
     return camera;
   },
+  Controls: (object, domElement) => new OrbitControls(object, domElement),
   Camera: new THREE.PerspectiveCamera(),
   Scene: (objs) => {
     const scene = new THREE.Scene();
@@ -332,6 +326,7 @@ export const three3gine: Three3gine = {
     const camera = (three3gine.Camera = three3gine.perspectiveCamera());
     const scene = three3gine.Scene(objects);
     const render = three3gine.Renderer(scene, camera);
+    const controls = three3gine.Controls(camera, render.domElement);
 
     let width = 0;
     let height = 0;
@@ -361,6 +356,8 @@ export const three3gine: Three3gine = {
       scene.traverse((obj) => {
         if (obj.render) obj.render(t);
       });
+
+      controls.update();
       render.render(scene, camera);
     }
 

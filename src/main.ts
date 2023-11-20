@@ -58,12 +58,12 @@ van.add(
       axesHelper({ args: [5] }),
       Cube({ position: [0, 1, 0], color: "blue" })
     ),
-    gridHelper({ args: [10, 50], rotation: [Math.PI / 2, 0, 0] })
+    gridHelper({ args: [10, 50], rotation: [Math.PI / 2, 0, 0] }),
     // group(
     //   { position: [2, 2, 0] },
     //   Cube({ position: [-1, 1, 0] }),
     //   Cube({ position: [1, 1, 0], children: Cube({ position: [1, -1, 0] }) })
     // ),
-    // axesHelper()
+    axesHelper()
   )
 );
