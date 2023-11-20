@@ -9,16 +9,18 @@ const {
   meshBasicMaterial,
   mesh,
   meshToonMaterial,
+  meshStandardMaterial,
   axesHelper,
   group,
   gridHelper,
+  ambientLight,
 } = three3gine;
 
 const Cube = (props: MeshProps & { color?: string } = {}) => {
   const obj = mesh(
     { ...props },
     boxGeometry(),
-    meshBasicMaterial({
+    meshStandardMaterial({
       color: props.color,
     })
   );
@@ -53,6 +55,7 @@ van.add(
   document.getElementById("app")!,
   Canvas(
     //Cube({ position: [0, 1, 0] }),
+    ambientLight({ args: ["red", 1000] }),
     Cube2(
       { position: [0, 2, 0] },
       axesHelper({ args: [5] }),

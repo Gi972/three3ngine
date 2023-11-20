@@ -1,12 +1,15 @@
 import van from "vanjs-core";
 import * as THREE from "three";
 import {
+  AmbientLightProps,
   AxesHelperProps,
   BoxGeometryProps,
   GridHelperProps,
   GroupProps,
   MeshBasicMaterialProps,
+  MeshLambertMaterialProps,
   MeshProps,
+  MeshStandardMaterialProps,
   MeshToonMaterialProps,
   ThreeElementsProps,
 } from "./typings/three-types";
@@ -182,7 +185,14 @@ type Three3gine = {
   meshBasicMaterial: (
     props?: MeshBasicMaterialProps
   ) => THREE.MeshBasicMaterial;
+
+  meshLambertMaterial: (
+    props?: MeshLambertMaterialProps
+  ) => THREE.MeshLambertMaterial;
   meshToonMaterial: (props?: MeshToonMaterialProps) => THREE.MeshToonMaterial;
+  meshStandardMaterial: (
+    props?: MeshStandardMaterialProps
+  ) => THREE.MeshStandardMaterial;
   perspectiveCamera: () => THREE.PerspectiveCamera;
   mesh: (
     ...props: (
@@ -193,6 +203,8 @@ type Three3gine = {
       | THREE.Group
     )[]
   ) => THREE.Mesh | THREE.Group;
+
+  ambientLight: (props?: AmbientLightProps) => THREE.AmbientLight;
   Camera: THREE.Camera;
   axesHelper: (props?: AxesHelperProps) => THREE.AxesHelper;
   gridHelper: (props?: GridHelperProps) => THREE.GridHelper;
@@ -217,6 +229,23 @@ export const three3gine: Three3gine = {
     const material = props?.args
       ? new THREE.MeshBasicMaterial(...props.args)
       : new THREE.MeshBasicMaterial();
+
+    attachProps(material, props);
+    return material;
+  },
+  meshStandardMaterial: (props?) => {
+    const material = props?.args
+      ? new THREE.MeshStandardMaterial(...props.args)
+      : new THREE.MeshStandardMaterial();
+
+    attachProps(material, props);
+    return material;
+  },
+
+  meshLambertMaterial: (props?) => {
+    const material = props?.args
+      ? new THREE.MeshLambertMaterial(...props.args)
+      : new THREE.MeshLambertMaterial();
 
     attachProps(material, props);
     return material;
@@ -281,6 +310,12 @@ export const three3gine: Three3gine = {
     });
 
     return group;
+  },
+
+  ambientLight: (props?: AmbientLightProps) => {
+    return props?.args
+      ? new THREE.AmbientLight(...props.args)
+      : new THREE.AmbientLight();
   },
 
   axesHelper: (props?: AxesHelperProps) => {
