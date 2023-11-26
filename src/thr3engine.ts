@@ -4,13 +4,20 @@ import {
   AmbientLightProps,
   AxesHelperProps,
   BoxGeometryProps,
+  DirectionalLightProps,
   GridHelperProps,
   GroupProps,
+  HemisphereLightProps,
   MeshBasicMaterialProps,
   MeshLambertMaterialProps,
   MeshProps,
   MeshStandardMaterialProps,
   MeshToonMaterialProps,
+  PointLightHelperProps,
+  PointLightProps,
+  SphereGeometryProps,
+  SpotLightHelperProps,
+  SpotLightProps,
   ThreeElementsProps,
 } from "./typings/three-types";
 import { Renderer } from "three";
@@ -51,7 +58,7 @@ export type BaseInstance =
     })
   | THREE.Material
   | THREE.Object3D
-  | THREE.BoxGeometry;
+  | THREE.BufferGeometry;
 
 export type Instance = BaseInstance & { [key: string]: any };
 
@@ -182,6 +189,7 @@ export function attachProps(instance: Instance, data: ThreeElementsProps = {}) {
 
 type Three3gine = {
   boxGeometry: (props?: BoxGeometryProps) => THREE.BoxGeometry;
+  sphereGeometry: (props?: SphereGeometryProps) => THREE.SphereGeometry;
   meshBasicMaterial: (
     props?: MeshBasicMaterialProps
   ) => THREE.MeshBasicMaterial;
@@ -205,6 +213,12 @@ type Three3gine = {
   ) => THREE.Mesh | THREE.Group;
 
   ambientLight: (props?: AmbientLightProps) => THREE.AmbientLight;
+  hemisphereLight: (props?: HemisphereLightProps) => THREE.HemisphereLight;
+  spotLight: (props?: SpotLightProps) => THREE.SpotLight;
+  spotLightHelper: (props?: SpotLightHelperProps) => THREE.SpotLightHelper;
+  directionalLight: (props?: DirectionalLightProps) => THREE.DirectionalLight;
+  pointLight: (props?: PointLightProps) => THREE.PointLight;
+  pointLightHelper: (props?: PointLightHelperProps) => THREE.PointLightHelper;
   Camera: THREE.Camera;
   axesHelper: (props?: AxesHelperProps) => THREE.AxesHelper;
   gridHelper: (props?: GridHelperProps) => THREE.GridHelper;
@@ -225,6 +239,13 @@ export const three3gine: Three3gine = {
     attachProps(geometry, props);
     return geometry;
   },
+  sphereGeometry: (props?) => {
+    const geometry = props?.args
+      ? new THREE.SphereGeometry(...props.args)
+      : new THREE.SphereGeometry();
+    attachProps(geometry, props);
+    return geometry;
+  },
   meshBasicMaterial: (props?) => {
     const material = props?.args
       ? new THREE.MeshBasicMaterial(...props.args)
@@ -241,7 +262,6 @@ export const three3gine: Three3gine = {
     attachProps(material, props);
     return material;
   },
-
   meshLambertMaterial: (props?) => {
     const material = props?.args
       ? new THREE.MeshLambertMaterial(...props.args)
@@ -311,13 +331,56 @@ export const three3gine: Three3gine = {
 
     return group;
   },
-
   ambientLight: (props?: AmbientLightProps) => {
     return props?.args
       ? new THREE.AmbientLight(...props.args)
       : new THREE.AmbientLight();
   },
+  hemisphereLight: (props) => {
+    const light = props?.args
+      ? new THREE.HemisphereLight(...props.args)
+      : new THREE.HemisphereLight();
+    attachProps(light, props);
+    return light;
+  },
+  pointLight: (props) => {
+    const light = props?.args
+      ? new THREE.PointLight(...props.args)
+      : new THREE.PointLight(0xff0000);
+    attachProps(light, props);
 
+    return light;
+  },
+  pointLightHelper: (props) => {
+    const lightHelper = props?.args
+      ? new THREE.PointLightHelper(...props.args)
+      : new THREE.PointLightHelper(props?.children);
+    attachProps(lightHelper, props);
+    return lightHelper;
+  },
+  spotLight: (props) => {
+    const light = props?.args
+      ? new THREE.SpotLight(...props.args)
+      : new THREE.SpotLight();
+    attachProps(light, props);
+    return light;
+  },
+  spotLightHelper(props) {
+    const spotligtr = props?.args
+      ? new THREE.SpotLightHelper(...props.args)
+      : new THREE.SpotLightHelper(props?.children);
+
+    return spotligtr;
+  },
+  directionalLight: (props) => {
+    const light = props?.args
+      ? new THREE.DirectionalLight(...props.args)
+      : new THREE.DirectionalLight();
+
+    attachProps(light, props);
+
+    return light;
+  },
   axesHelper: (props?: AxesHelperProps) => {
     return props?.args
       ? new THREE.AxesHelper(...props.args)
@@ -359,6 +422,7 @@ export const three3gine: Three3gine = {
   },
   Canvas: (...objects) => {
     const camera = (three3gine.Camera = three3gine.perspectiveCamera());
+    camera.position.set(0, 0, 10);
     const scene = three3gine.Scene(objects);
     const render = three3gine.Renderer(scene, camera);
     const controls = three3gine.Controls(camera, render.domElement);
