@@ -22,6 +22,7 @@ import {
 } from "./typings/three-types";
 import { Renderer } from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { GLTF, GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 const { div } = van.tags;
 
@@ -187,6 +188,30 @@ export function attachProps(instance: Instance, data: ThreeElementsProps = {}) {
   }
 }
 
+export function buildGraph(object: THREE.Object3D) {
+  const data: ObjectMap = { nodes: {}, materials: {} };
+  if (object) {
+    object.traverse((obj: any) => {
+      if (obj.name) data.nodes[obj.name] = obj;
+      if (obj.material && !data.materials[obj.material.name])
+        data.materials[obj.material.name] = obj.material;
+    });
+  }
+  return data;
+}
+
+export type ObjectMap = {
+  nodes: { [name: string]: THREE.Object3D };
+  materials: { [name: string]: THREE.Material };
+};
+
+type Loaders = {
+  [url: string]: GLTF;
+};
+
+type UseGLTFL = (url: string) => GLTF & ObjectMap;
+type USEGLTFL = UseGLTFL & { preload: (url: string) => Promise<void> };
+
 type Three3gine = {
   boxGeometry: (props?: BoxGeometryProps) => THREE.BoxGeometry;
   sphereGeometry: (props?: SphereGeometryProps) => THREE.SphereGeometry;
@@ -229,7 +254,25 @@ type Three3gine = {
   Scene: (objs: THREE.Object3D[]) => THREE.Scene;
   Canvas: (...props: THREE.Object3D[]) => HTMLDivElement;
   Renderer: (scene: THREE.Scene, camera: THREE.Camera) => THREE.WebGLRenderer;
+  useGLTFL: USEGLTFL;
 };
+
+const useGLTFL: USEGLTFL = (url) => {
+  const data = loaders[url];
+  const loader = Object.assign(data, buildGraph(data.scene));
+  return loader;
+};
+
+useGLTFL.preload = async (url: string) => {
+  const loader = new GLTFLoader();
+  try {
+    loaders[url] = await loader.loadAsync(url);
+  } catch (error) {
+    throw new Error(`gltf loader ${url}, doesn't load`);
+  }
+};
+
+const loaders: Loaders = {};
 
 export const three3gine: Three3gine = {
   boxGeometry: (props?) => {
@@ -404,6 +447,7 @@ export const three3gine: Three3gine = {
     camera.position.z = 5;
     return camera;
   },
+  useGLTFL: useGLTFL,
   Controls: (object, domElement) => new OrbitControls(object, domElement),
   Camera: new THREE.PerspectiveCamera(),
   Scene: (objs) => {

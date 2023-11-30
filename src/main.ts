@@ -10,19 +10,17 @@ const {
   boxGeometry,
   meshBasicMaterial,
   mesh,
-  meshToonMaterial,
   meshStandardMaterial,
   axesHelper,
   group,
   gridHelper,
-  ambientLight,
-  spotLight,
-  pointLight,
-  pointLightHelper,
   sphereGeometry,
   hemisphereLight,
   directionalLight,
+  useGLTFL,
 } = three3gine;
+
+await useGLTFL.preload("toon_cat_free/scene.gltf");
 
 const Cube = (props: MeshProps & { color?: string } = {}) => {
   const obj = mesh(
@@ -93,21 +91,32 @@ const Sphere = () => {
   return grouping;
 };
 
+const Cat = () => {
+  const model = useGLTFL("toon_cat_free/scene.gltf");
+  const { scene } = model;
+
+  scene.scale.set(0.01, 0.01, 0.01);
+  return scene;
+};
+
+const Clone = () => {
+  const cube = Cube();
+
+  const cube2 = cube.clone();
+  cube2.position.set(-1, -1, 0);
+
+  return group(cube, cube2);
+};
+
 van.add(
   document.getElementById("app")!,
   Canvas(
-    //ambientLight({ args: [0x404040, 100.0] }),
     hemisphereLight({
-      args: ["white", "darkslategray", 100],
+      args: ["white", "darkslategray", 50],
     }),
+    Cat(),
+    Clone(),
     directionalLight({ args: ["white", 5], position: [3, 3, 3] }),
-
-    Sphere(),
-    // Cube2(
-    //   { position: [0, -1, 0] },
-    //   axesHelper({ args: [5] }),
-    //   Cube({ position: [0, 1, 0], color: "blue" })
-    // ),
     gridHelper({ args: [10, 50], rotation: [Math.PI / 2, 0, 0] }),
     axesHelper()
   )
